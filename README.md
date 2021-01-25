@@ -1,6 +1,6 @@
 # MyApp
 
-![Elixir CI][https://github.com/catherinejv2/my-phoenix-json-api/workflows/Elixir%20CI/badge.svg]
+![Elixir CI](https://github.com/catherinejv2/my-phoenix-json-api/workflows/Elixir%20CI/badge.svg)
 
 To start your Phoenix server:
 
