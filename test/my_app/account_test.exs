@@ -55,8 +55,7 @@ defmodule MyApp.AccountTest do
       assert user.is_active == false
 
       assert Bcrypt.verify_pass(
-               "some updated mix phx.gen.json Account User users email:string password:string \
-      is_active:boolean --no-context --no-schemapassword",
+               "some updated password",
                user.password_hash
              )
     end
