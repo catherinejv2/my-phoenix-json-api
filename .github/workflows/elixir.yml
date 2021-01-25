@@ -7,25 +7,49 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-
-    name: Build and test
+  test:
+    name: Testing
     runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres
+        ports: ['5432:5432']
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Set up Elixir
       uses: actions/setup-elixir@v1
       with:
         elixir-version: '1.11.3' # Define the elixir version [required]
         otp-version: '23.2' # Define the OTP version [required]
+
     - name: Restore dependencies cache
       uses: actions/cache@v2
       with:
         path: deps
         key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
         restore-keys: ${{ runner.os }}-mix-
+
+    - name: Output Elixir version
+      run: elixir --version
+
+    - name: Output PostgreSQL version
+      run: psql --version
+
+    - name: Output Node.js version
+      run: node --version
+
     - name: Install dependencies
       run: mix deps.get
+
     - name: Run tests
       run: mix test
