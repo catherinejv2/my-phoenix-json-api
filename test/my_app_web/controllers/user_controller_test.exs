@@ -58,13 +58,11 @@ defmodule MyAppWeb.UserControllerTest do
 
       conn = get(conn, Routes.user_path(conn, :show, id))
 
-      assert json_response(conn, 200)["data"] == [
-               %{
+      assert json_response(conn, 200)["data"] == %{
                  "id" => id,
                  "email" => "some email",
                  "is_active" => true
                }
-             ]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
@@ -82,13 +80,11 @@ defmodule MyAppWeb.UserControllerTest do
 
       conn = get(conn, Routes.user_path(conn, :show, id))
 
-      assert json_response(conn, 200)["data"] == [
-               %{
+      assert json_response(conn, 200)["data"] == %{
                  "id" => id,
                  "email" => "some updated email",
                  "is_active" => false
                }
-             ]
     end
 
     test "renders errors when data is invalid", %{conn: conn, user: user} do
