@@ -10,7 +10,12 @@ jobs:
   test:
     name: Testing
     runs-on: ubuntu-latest
-
+    env:
+      MIX_ENV: test
+    strategy:
+      matrix:
+        elixir: ['1.11.3']
+        otp: ['23.2']
     services:
       db:
         image: postgres
@@ -29,15 +34,20 @@ jobs:
     - name: Set up Elixir
       uses: actions/setup-elixir@v1
       with:
-        elixir-version: '1.11.3' # Define the elixir version [required]
-        otp-version: '23.2' # Define the OTP version [required]
+        elixir-version: ${{ matrix.elixir }}
+        otp-version: ${{ matrix.otp }}
 
     - name: Restore dependencies cache
       uses: actions/cache@v2
       with:
-        path: deps
-        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
-        restore-keys: ${{ runner.os }}-mix-
+        path: deps/
+        key: deps-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
+
+    - name: Get build cache
+      uses: actions/cache@v2
+      with:
+        path: _build/test/
+        key: build-${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-${{ hashFiles('**/mix.lock') }}
 
     - name: Output Elixir version
       run: elixir --version
@@ -49,7 +59,11 @@ jobs:
       run: node --version
 
     - name: Install dependencies
-      run: mix deps.get
+      run: |
+        mix deps.get
+        mix compile
 
     - name: Run tests
       run: mix coveralls.github
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
